@@ -171,28 +171,124 @@ The plugin should preserve this contract and allow the content pipeline to defin
 - Tile loading must be cancellable (Android legacy supports cancel per tile).
 - The plugin must allow controlling cache size / memory pressure response.
 
-## Interfaces (Flutter ↔ native)
+## Interfaces (Flutter ↔ Native)
 
-This spec defines minimal required concepts; concrete channel names can be chosen during implementation.
+### Architecture Decision
 
-### Input to native
+- **Content source**: `.comics` archive path передаётся целиком в нативную часть
+- **Parsing**: Native распаковывает ZIP и парсит `data.json`
+- **Platform View**: Используется для встраивания нативного рендера в Flutter
 
-- scene descriptor:
-  - scene size
-  - layers ordered
-  - per layer: image template + size + animations + popup id
-  - current language
-  - content location (archive path / resolver)
-- runtime controls:
-  - set scroll offset
-  - set zoom enabled / scale
-  - request hit-test at point
+### Dart Public API
 
-### Output to Flutter
+```dart
+/// Виджет для отображения комикса
+class ComicsViewer extends StatefulWidget {
+  /// Путь к .comics архиву
+  final String archivePath;
 
-- events:
-  - layer hit (id + popup reference)
-  - tile load errors (optional)
+  /// Индекс языка для локализованных слоёв (0-based, соответствует индексу в images[])
+  final int languageIndex;
+
+  /// Начальный scroll offset (в логических пикселях контента)
+  final int initialScrollOffset;
+
+  /// Включить zoom (default: false для комиксов)
+  final bool zoomEnabled;
+
+  /// Включить звук (default: true)
+  final bool soundEnabled;
+
+  /// Контроллер для программного управления
+  final ComicsViewerController? controller;
+
+  /// Callbacks
+  final void Function(int layerIndex, String? popupPath)? onLayerTap;
+  final void Function(int layerIndex, String? popupPath)? onLayerLongPress;
+  final void Function(int scrollOffset, int maxOffset)? onScrollChanged;
+  final void Function(ComicsInfo info)? onSceneLoaded;
+  final void Function(String error)? onError;
+}
+
+/// Информация о загруженной сцене
+class ComicsInfo {
+  final int width;
+  final int height;
+  final int layerCount;
+  final bool hasSound;
+}
+
+/// Результат hit-test
+class HitTestResult {
+  final int layerIndex;
+  final String? popupPath;
+  final bool isHit;  // true если попали в непрозрачный пиксель
+}
+
+/// Контроллер для программного управления
+class ComicsViewerController {
+  Future<void> setScrollOffset(int offset);
+  Future<int> getScrollOffset();
+  Future<void> setLanguageIndex(int index);
+  Future<void> setSoundEnabled(bool enabled);
+  Future<void> pauseSounds();
+  Future<void> resumeSounds();
+  Future<HitTestResult?> hitTest(double x, double y);
+  void dispose();
+}
+```
+
+### Method Channel Protocol
+
+**Channel name**: `flutter_comics`
+
+| Method | Direction | Parameters | Returns |
+|--------|-----------|------------|---------|
+| `loadScene` | Dart → Native | `{archivePath: String, languageIndex: int, zoomEnabled: bool, soundEnabled: bool}` | `{width: int, height: int, layerCount: int, hasSound: bool}` |
+| `setScrollOffset` | Dart → Native | `{offset: int}` | `void` |
+| `getScrollOffset` | Dart → Native | — | `int` |
+| `setLanguageIndex` | Dart → Native | `{index: int}` | `void` |
+| `setSoundEnabled` | Dart → Native | `{enabled: bool}` | `void` |
+| `pauseSounds` | Dart → Native | — | `void` |
+| `resumeSounds` | Dart → Native | — | `void` |
+| `hitTest` | Dart → Native | `{x: double, y: double}` | `{layerIndex: int, popupPath: String?, isHit: bool}?` |
+| `dispose` | Dart → Native | — | `void` |
+
+### Event Channel Protocol
+
+**Channel name**: `flutter_comics/events`
+
+| Event | Data |
+|-------|------|
+| `sceneLoaded` | `{width: int, height: int, layerCount: int, hasSound: bool}` |
+| `scrollChanged` | `{offset: int, maxOffset: int}` |
+| `layerTap` | `{layerIndex: int, popupPath: String?}` |
+| `layerLongPress` | `{layerIndex: int, popupPath: String?}` |
+| `error` | `{message: String}` |
+
+### Platform View Registration
+
+**Android**: `ComicsViewFactory` регистрируется как `flutter_comics_view`
+**iOS**: `ComicsViewFactory` регистрируется как `flutter_comics_view`
+
+```dart
+// Usage in widget
+AndroidView(viewType: 'flutter_comics_view', creationParams: {...})
+UiKitView(viewType: 'flutter_comics_view', creationParams: {...})
+```
+
+### Native Implementation Requirements
+
+#### Archive Handling
+1. Native получает `archivePath` (абсолютный путь к .comics файлу)
+2. Распаковывает ZIP во временную директорию или читает напрямую
+3. Парсит `data.json` в модель `Comics`
+4. Загружает тайлы из `layers/` по мере необходимости
+
+#### Memory Management
+- Тайлы загружаются только для видимой области + margin
+- При выходе слоя из viewport — тайлы выгружаются, view остаётся
+- LRU кэш для декодированных bitmap
 
 ## Testing Strategy (for plugin build)
 
@@ -201,10 +297,13 @@ This spec defines minimal required concepts; concrete channel names can be chose
 - **Animation math**: verify matrix+alpha for known animation segments at boundary offsets.
 - **Hit-test**: verify alpha sampling mapping.
 
-## Open Design Questions
+## Design Decisions (Resolved)
 
-- Should iOS continue to use CATiledLayer, or switch to Android-like explicit visible-rect tile set computation for consistent control (at cost of more code)?
-- Should the plugin expose a “tile source” callback API to Flutter (Dart -> native) or keep tile IO fully native (archive extracted by native)?
+| Question | Decision |
+|----------|----------|
+| iOS tile rendering approach | Keep CATiledLayer (proven, less code) |
+| Content source | `.comics` archive path passed to native; native handles ZIP extraction and JSON parsing |
+| Tile loading | Fully native (no Dart callbacks for tile IO) |
 
 ---
 

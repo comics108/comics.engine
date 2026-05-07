@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'flutter_comics_platform_interface.dart';
 
-/// An implementation of [FlutterComicsPlatform] that uses method channels.
+/// Method channel implementation of [FlutterComicsPlatform].
 class MethodChannelFlutterComics extends FlutterComicsPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
@@ -11,9 +11,19 @@ class MethodChannelFlutterComics extends FlutterComicsPlatform {
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>(
-      'getPlatformVersion',
-    );
+    final version =
+        await methodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
+  }
+
+  @override
+  Future<bool> isSupported() async {
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+      case TargetPlatform.iOS:
+        return true;
+      default:
+        return false;
+    }
   }
 }
