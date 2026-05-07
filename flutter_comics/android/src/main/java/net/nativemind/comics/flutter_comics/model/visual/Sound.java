@@ -4,15 +4,16 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Interpolator;
 import androidx.annotation.FloatRange;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 import net.nativemind.comics.flutter_comics.model.visual.animation.SoundAnim;
 
 import java.util.ArrayList;
 
 public class Sound {
-	private static final FastOutSlowInInterpolator INTERPOLATOR = new FastOutSlowInInterpolator();
+	private static final Interpolator INTERPOLATOR = new AccelerateDecelerateInterpolator();
 
 	private String file;
 	private ArrayList<SoundAnim> animations;

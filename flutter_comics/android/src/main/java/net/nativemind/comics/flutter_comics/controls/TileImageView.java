@@ -1,4 +1,4 @@
-package com.fulldome.mahabharata.controls;
+package net.nativemind.comics.flutter_comics.controls;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,12 +8,8 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.util.LruCache;
 import android.view.View;
-
-import com.fulldome.mahabharata.model.ComicsDescriptor;
-import com.fulldome.mahabharata.utils.ImageManager;
-import com.ironwaterstudio.server.CacheManager;
-import com.ironwaterstudio.server.data.ApiResult;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,7 +20,17 @@ public class TileImageView extends View implements ZoomFrameLayout.ZoomableView 
 	private static final float NO_TILES = -1;
 	private static final int TILE_SIZE = 512;
 
-	private final ComicsDescriptor descriptor;
+	// TODO: Implement bitmap cache
+	// Using a simple LruCache for now, will need proper cache integration
+	private static LruCache<String, Bitmap> bitmapCache = new LruCache<String, Bitmap>(
+			(int) (Runtime.getRuntime().maxMemory() / 1024 / 8)) {
+		@Override
+		protected int sizeOf(String key, Bitmap bitmap) {
+			return bitmap.getByteCount() / 1024;
+		}
+	};
+
+	private final String archivePath;
 	private final int sampleSize;
 	private final String template;
 	private final String placeholder;
@@ -39,18 +45,10 @@ public class TileImageView extends View implements ZoomFrameLayout.ZoomableView 
 	private final Point preloadOffset = new Point();
 	private final boolean zoomEnabled;
 
-	private ImageManager.ImageCallListener loadedListener = new ImageManager.ImageCallListener() {
-		@Override
-		protected void onSuccess(ApiResult result) {
-			super.onSuccess(result);
-			invalidate();
-		}
-	};
-
-	public TileImageView(Context context, ComicsDescriptor descriptor, int sampleSize, String filePath, boolean zoomEnabled) {
+	public TileImageView(Context context, String archivePath, int sampleSize, String filePath, boolean zoomEnabled) {
 		super(context);
 		this.zoomEnabled = zoomEnabled;
-		this.descriptor = descriptor;
+		this.archivePath = archivePath;
 		this.template = filePath;
 		tileMode = filePath.contains("{0}");
 		this.sampleSize = sampleSize;
@@ -85,7 +83,7 @@ public class TileImageView extends View implements ZoomFrameLayout.ZoomableView 
 			return;
 
 		if (needDrawPlaceholder(tileLevel)) {
-			Bitmap holderBitmap = CacheManager.getBitmapCache().get(ImageManager.buildKey(descriptor, placeholder));
+			Bitmap holderBitmap = getBitmapFromCache(buildKey(placeholder));
 			if (holderBitmap != null)
 				canvas.drawBitmap(holderBitmap, null, contentRect, paint);
 		}
@@ -93,7 +91,7 @@ public class TileImageView extends View implements ZoomFrameLayout.ZoomableView 
 		for (Tile tile : tileLevel) {
 			if (!tile.isVisible())
 				continue;
-			Bitmap bitmap = CacheManager.getBitmapCache().get(ImageManager.buildKey(descriptor, tile.getFileName()));
+			Bitmap bitmap = getBitmapFromCache(buildKey(tile.getFileName()));
 			if (bitmap != null)
 				canvas.drawBitmap(bitmap, null, tile.getRect(), paint);
 		}
@@ -103,7 +101,7 @@ public class TileImageView extends View implements ZoomFrameLayout.ZoomableView 
 		if (!tileMode)
 			return false;
 		for (Tile tile : tileLevel) {
-			if (tile.isVisible() && CacheManager.getBitmapCache().get(ImageManager.buildKey(descriptor, tile.getFileName())) == null)
+			if (tile.isVisible() && getBitmapFromCache(buildKey(tile.getFileName())) == null)
 				return true;
 		}
 		return false;
@@ -125,7 +123,7 @@ public class TileImageView extends View implements ZoomFrameLayout.ZoomableView 
 		}
 		if (hitTile == null)
 			return false;
-		Bitmap bitmap = CacheManager.getBitmapCache().get(ImageManager.buildKey(descriptor, hitTile.getFileName()));
+		Bitmap bitmap = getBitmapFromCache(buildKey(hitTile.getFileName()));
 		if (bitmap == null)
 			return false;
 		int localX = Math.min(bitmap.getWidth() - 1, (int) (Math.max(0, (int) point[0] - hitTile.getRect().left) * zoomLevel));
@@ -139,18 +137,33 @@ public class TileImageView extends View implements ZoomFrameLayout.ZoomableView 
 		if (tileLevel == null)
 			return;
 		if (tileMode) {
-			if (!preloadBitmapRect.isEmpty())
-				ImageManager.getBitmap(descriptor, placeholder, sampleSize, loadedListener);
-			else
-				ImageManager.cancel(descriptor, placeholder);
+			if (!preloadBitmapRect.isEmpty()) {
+				// TODO: Load placeholder bitmap from archive
+				loadBitmap(placeholder);
+			}
 		}
 
 		for (Tile tile : tileLevel) {
-			if (!preloadBitmapRect.isEmpty() && tile.isPreloadBitmap())
-				ImageManager.getBitmap(descriptor, tile.getFileName(), sampleSize, loadedListener);
-			else
-				ImageManager.cancel(descriptor, tile.getFileName());
+			if (!preloadBitmapRect.isEmpty() && tile.isPreloadBitmap()) {
+				// TODO: Load tile bitmap from archive
+				loadBitmap(tile.getFileName());
+			}
 		}
+	}
+
+	// TODO: Implement actual bitmap loading from archive
+	private void loadBitmap(String fileName) {
+		// Stub implementation - bitmap loading not yet implemented
+		// This should load from archivePath + fileName with sampleSize
+	}
+
+	private Bitmap getBitmapFromCache(String key) {
+		// TODO: Implement proper cache lookup
+		return bitmapCache.get(key);
+	}
+
+	private String buildKey(String fileName) {
+		return archivePath + "_" + fileName;
 	}
 
 	private void getPreloadBitmapRect(Rect rect) {

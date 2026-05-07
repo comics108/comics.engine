@@ -1,10 +1,9 @@
-package com.fulldome.mahabharata.controls;
+package net.nativemind.comics.flutter_comics.controls;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -19,8 +18,6 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
-
-import com.fulldome.mahabharata.R;
 
 public class ZoomFrameLayout extends FrameLayout implements GestureDetector.OnGestureListener, ScaleGestureDetector.OnScaleGestureListener, GestureDetector.OnDoubleTapListener {
 	public enum FitMode {VERTICAL, HORIZONTAL}
@@ -54,16 +51,20 @@ public class ZoomFrameLayout extends FrameLayout implements GestureDetector.OnGe
 		detector = new GestureDetector(context, this);
 		scaleDetector = new ScaleGestureDetector(context, this);
 
-		if (attrs == null)
-			return;
-		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ZoomFrameLayout);
-		fitMode = FitMode.values()[a.getInt(R.styleable.ZoomFrameLayout_fitMode, fitMode.ordinal())];
-		zoomEnabled = a.getBoolean(R.styleable.ZoomFrameLayout_zoomEnabled, zoomEnabled);
-		a.recycle();
+		// Note: Removed R.styleable.ZoomFrameLayout dependency
+		// If you need custom attributes, define them in res/values/attrs.xml
 	}
 
 	public float getScale() {
 		return scale;
+	}
+
+	public void setFitMode(FitMode fitMode) {
+		this.fitMode = fitMode;
+	}
+
+	public void setZoomEnabled(boolean zoomEnabled) {
+		this.zoomEnabled = zoomEnabled;
 	}
 
 	public void setScrollListener(OnScrollListener scrollListener) {

@@ -1,4 +1,4 @@
-package com.fulldome.mahabharata.controls;
+package net.nativemind.comics.flutter_comics.controls;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -13,9 +13,8 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Transformation;
 import android.widget.FrameLayout;
 
-import com.fulldome.mahabharata.model.ComicsDescriptor;
-import com.fulldome.mahabharata.model.visual.Comics;
-import com.fulldome.mahabharata.model.visual.Layer;
+import net.nativemind.comics.flutter_comics.model.visual.Comics;
+import net.nativemind.comics.flutter_comics.model.visual.Layer;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -139,7 +138,7 @@ public class LayersView extends FrameLayout implements ZoomFrameLayout.ZoomableV
 			if (layer.isPreview() != needShowPreview())
 				continue;
 			FrameLayout.LayoutParams params = new LayoutParams(layer.getImage().getWidth(), layer.getImage().getHeight());
-			TileImageView view = new TileImageView(getContext(), getComics().getDescriptor(), getComics().getSampleSize(), layer.getImage().getFile(ComicsDescriptor.ImageType.LAYER), zoomEnabled);
+			TileImageView view = new TileImageView(getContext(), getComics().getArchivePath(), getComics().getSampleSize(), layer.getImage().getFile(), zoomEnabled);
 			view.setPreloadOffset(preloadOffset);
 			view.setTag(layer);
 			addView(view, params);
@@ -156,7 +155,7 @@ public class LayersView extends FrameLayout implements ZoomFrameLayout.ZoomableV
 			if (layer.isPreview() != needShowPreview() || contains(layer))
 				continue;
 			FrameLayout.LayoutParams params = new LayoutParams(layer.getImage().getWidth(), layer.getImage().getHeight());
-			TileImageView view = new TileImageView(getContext(), getComics().getDescriptor(), getComics().getSampleSize(), layer.getImage().getFile(ComicsDescriptor.ImageType.LAYER), zoomEnabled);
+			TileImageView view = new TileImageView(getContext(), getComics().getArchivePath(), getComics().getSampleSize(), layer.getImage().getFile(), zoomEnabled);
 			view.setPreloadOffset(preloadOffset);
 			view.setTag(layer);
 			view.setVisibility(INVISIBLE);
