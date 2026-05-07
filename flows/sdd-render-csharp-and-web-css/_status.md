@@ -37,7 +37,11 @@ Key decisions and context for resuming:
 - 1) Unity/C# for desktop/mobile/console games
 - 2) Web HTML/CSS for browser-based viewing
 - Both must be compatible with existing .comics archive format
-- Core specs from `../sdd-render-engine-native/03-specifications-ru.md`
+- Core engine specs moved to:
+  - Unity: `../sdd-comics-engine-csharp-unity/specifications-ru.md`
+  - Web: `../sdd-comics-engine-flutter-web/specifications-ru.md`
+- Core format specs moved to:
+  - `.comics`: `../sdd-comics-format/02-specifications-ru.md`
 
 ### Decisions made:
 - Unity: **WorldSpace rendering** (camera + 3D planes), VR-ready architecture

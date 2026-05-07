@@ -69,7 +69,12 @@
   - Identical API to Android version
 
 **Created**:
-- Extended `flows/sdd-render-engine-native/03-specifications-ru.md`: Detailed Russian specifications
+- Detailed Russian specifications were split:
+  - Android: `../sdd-comics-engine-flutter-android/specifications-ru.md`
+  - iOS: `../sdd-comics-engine-flutter-ios/specifications-ru.md`
+  - Web: `../sdd-comics-engine-flutter-web/specifications-ru.md`
+  - Unity: `../sdd-comics-engine-csharp-unity/specifications-ru.md`
+  - Format: `../sdd-comics-format/02-specifications-ru.md`
 - Created `flows/legacy/understanding/_root.md`: Root analysis document
 
 **ADR Candidates Identified**:

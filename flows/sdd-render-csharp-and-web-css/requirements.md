@@ -3,7 +3,9 @@
 > Version: 1.0
 > Status: APPROVED
 > Last Updated: 2026-05-08
-> Base specs: `../sdd-render-engine-native/03-specifications-ru.md`
+> Base specs (moved):  
+> - Engine: `../sdd-comics-engine-csharp-unity/specifications-ru.md` (Unity), `../sdd-comics-engine-flutter-web/specifications-ru.md` (Web)  
+> - Format: `../sdd-comics-format/02-specifications-ru.md` (`.comics`, `data.json`, invariants)
 
 ## Problem Statement
 
@@ -112,10 +114,7 @@
 - **Без фреймворков**: Нет React/Vue/Angular зависимостей
 
 ### Общие
-- **Tile size**: 512x512 px (неизменяемо)
-- **Tile naming**: `{0}_{1}_{2}` формат (zoom*1000, col, row)
-- **Animation order**: Scale → Rotate → Translate
-- **Archive format**: ZIP с data.json + layers/ + sounds/
+- **Формат контента**: см. `../sdd-comics-format/02-specifications-ru.md` (TILE_SIZE, tile naming, data.json, ZIP layout)
 
 ## Decisions (Resolved Questions)
 
@@ -133,7 +132,8 @@
 
 ## References
 
-- [Спецификации нативного движка](../sdd-render-engine-native/03-specifications-ru.md)
+- [Спецификация формата `.comics`](../sdd-comics-format/02-specifications-ru.md)
+- [Спеки движков (Unity/Web)](../sdd-render-csharp-and-web-css/specifications.md)
 - [Legacy Bhagavadgita Web (CreateJS)](../../legacy/legacy-bhagavadgita-render-engine-web-css/)
 - [Legacy Mahabharata Android (Java)](../../legacy/legacy-mahabharata-render-engine-android-java/)
 - [Legacy Mahabharata iOS (Swift)](../../legacy/legacy-mahabharata-render-engine-ios-swift/)

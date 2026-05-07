@@ -37,9 +37,9 @@ The engine will be shipped as a **Flutter plugin** with **native implementations
 ### Must Have
 
 1. **Tiled image rendering**  
-   **Given** an image whose file template contains `{0}{1}{2}`  
+   **Given** an image whose file template contains `{0}{1}{2}` (см. формат `.comics`)  
    **When** the user scrolls/zooms  
-   **Then** the engine requests and renders 512×512 tiles for the visible region (plus a preload margin), using `{0}=zoom*1000`, `{1}=col`, `{2}=row`.
+   **Then** the engine requests and renders 512×512 tiles for the visible region (plus a preload margin), using the `.comics` tile invariants.
 
 2. **Layer transforms and alpha driven by scroll offset**  
    **Given** a list of layers with animation tracks (translate/rotate/scale/alpha)  
@@ -76,7 +76,7 @@ The engine will be shipped as a **Flutter plugin** with **native implementations
 - **Platform**: Android + iOS native, exposed to Flutter via plugin channels.
 - **Performance**: must support very large content (height >> screen) without decoding full bitmaps.
 - **Memory**: must avoid holding decoded tiles for offscreen regions.
-- **Compatibility**: must align with legacy asset naming (`{0}{1}{2}`, `tileSize=512`) to reuse existing archives.
+- **Compatibility**: must align with the canonical `.comics` format invariants to reuse existing archives. See: `../sdd-comics-format/02-specifications-ru.md`.
 
 ## Open Questions
 

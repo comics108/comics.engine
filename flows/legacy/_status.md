@@ -44,7 +44,12 @@
 
 ## Output Files
 
-1. `flows/sdd-render-engine-native/03-specifications-ru.md` - Детальные спецификации на русском
+1. `flows/sdd-render-engine-native/03-specifications-ru.md` - Индекс (спека вынесена по платформам)
+2. `flows/sdd-comics-engine-flutter-android/specifications-ru.md` - Android движок (RU)
+3. `flows/sdd-comics-engine-flutter-ios/specifications-ru.md` - iOS движок (RU)
+4. `flows/sdd-comics-engine-flutter-web/specifications-ru.md` - Web движок (RU)
+5. `flows/sdd-comics-engine-csharp-unity/specifications-ru.md` - Unity движок (RU)
+6. `flows/sdd-comics-format/02-specifications-ru.md` - Формат `.comics` (RU)
 2. `flows/legacy/understanding/_root.md` - Анализ legacy-кодовой базы
 
 ## ADR Candidates (Not Yet Created)
