@@ -1,0 +1,18 @@
+{
+    "name": "net.nativemind.comics-viewer.Editor",
+    "rootNamespace": "NativeMind.ComicsViewer.Editor",
+    "references": [
+        "net.nativemind.comics-viewer.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

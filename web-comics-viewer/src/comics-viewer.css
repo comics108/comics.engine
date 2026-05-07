@@ -1,0 +1,70 @@
+/* Comics Viewer - Core Styles */
+
+.comics-viewer {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  background: #000;
+}
+
+.comics-content {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.comics-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform, opacity;
+  transform-origin: top left;
+  pointer-events: none;
+}
+
+.comics-layer.interactive {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.comics-tile {
+  position: absolute;
+  width: 512px;
+  height: 512px;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.comics-tile.loading {
+  background-color: #1a1a1a;
+}
+
+.comics-tile.loaded {
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive scaling */
+@media (max-width: 768px) {
+  .comics-content {
+    transform-origin: top center;
+  }
+}
+
+/* Hide scrollbar but allow scrolling */
+.comics-viewer::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+.comics-viewer {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}

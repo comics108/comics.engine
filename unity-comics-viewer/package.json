@@ -1,0 +1,30 @@
+{
+  "name": "net.nativemind.comics-viewer",
+  "version": "1.0.0",
+  "displayName": "Comics Viewer",
+  "description": "Render engine for interactive .comics archives with scroll-driven animations",
+  "unity": "2021.3",
+  "unityRelease": "0f1",
+  "documentationUrl": "https://github.com/example/unity-comics-viewer",
+  "changelogUrl": "https://github.com/example/unity-comics-viewer/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/example/unity-comics-viewer/blob/main/LICENSE.md",
+  "keywords": [
+    "comics",
+    "viewer",
+    "animation",
+    "scroll"
+  ],
+  "author": {
+    "name": "NativeMind",
+    "email": "info@nativemind.net",
+    "url": "https://nativemind.net"
+  },
+  "type": "library",
+  "samples": [
+    {
+      "displayName": "Basic Viewer",
+      "description": "Simple comics viewer demo scene",
+      "path": "Samples~/BasicViewer"
+    }
+  ]
+}

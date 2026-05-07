@@ -1,0 +1,26 @@
+{
+  "name": "@nativemind/comics-viewer",
+  "version": "1.0.0",
+  "description": "Render engine for interactive .comics archives with scroll-driven animations",
+  "main": "src/comics-viewer.js",
+  "type": "module",
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'No build required - vanilla JS'"
+  },
+  "keywords": [
+    "comics",
+    "viewer",
+    "animation",
+    "scroll"
+  ],
+  "author": "NativeMind <info@nativemind.net>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/example/web-comics-viewer"
+  },
+  "dependencies": {
+    "fflate": "^0.8.2"
+  }
+}
