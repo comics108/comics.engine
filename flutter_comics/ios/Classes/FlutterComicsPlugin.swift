@@ -6,6 +6,10 @@ public class FlutterComicsPlugin: NSObject, FlutterPlugin {
     let channel = FlutterMethodChannel(name: "flutter_comics", binaryMessenger: registrar.messenger())
     let instance = FlutterComicsPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
+
+    // Register Platform View Factory for native comics rendering
+    let factory = ComicsViewFactory(messenger: registrar.messenger())
+    registrar.register(factory, withId: "flutter_comics_view")
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {

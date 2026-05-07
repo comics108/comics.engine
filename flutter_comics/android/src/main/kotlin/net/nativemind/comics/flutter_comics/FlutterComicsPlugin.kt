@@ -19,6 +19,12 @@ class FlutterComicsPlugin :
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "flutter_comics")
         channel.setMethodCallHandler(this)
+
+        // Register Platform View Factory for native comics rendering
+        flutterPluginBinding.platformViewRegistry.registerViewFactory(
+            "flutter_comics_view",
+            ComicsViewFactory(flutterPluginBinding.binaryMessenger)
+        )
     }
 
     override fun onMethodCall(

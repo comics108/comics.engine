@@ -141,4 +141,10 @@ public class Comics {
 		for (Sound audio : getSounds())
 			audio.resume();
 	}
+
+	public void setLanguageIndex(int languageIndex) {
+		for (Layer layer : getLayers()) {
+			layer.setLanguageIndex(languageIndex);
+		}
+	}
 }
