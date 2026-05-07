@@ -1,6 +1,6 @@
-package com.fulldome.mahabharata.model.visual.animation;
+package net.nativemind.comics.flutter_comics.model.visual.animation;
 
-import com.fulldome.mahabharata.model.visual.Layer;
+import net.nativemind.comics.flutter_comics.model.visual.Layer;
 
 public class ScaleAnim extends LayerAnim {
 	private float scaleX;

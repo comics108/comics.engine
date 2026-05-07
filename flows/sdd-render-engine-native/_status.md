@@ -2,15 +2,15 @@
 
 ## Current Phase
 
-REQUIREMENTS
+SPECIFICATIONS
 
 ## Phase Status
 
-DRAFTING
+READY FOR REVIEW
 
 ## Last Updated
 
-2026-05-07 by GPT-5.2 (Cursor agent)
+2026-05-07 by Claude Opus 4.5
 
 ## Blockers
 
@@ -20,11 +20,11 @@ DRAFTING
 
 - [x] Requirements drafted
 - [ ] Requirements approved
-- [x] Specifications drafted
+- [x] Specifications drafted (with Flutter API)
 - [ ] Specifications approved
 - [x] Plan drafted
 - [ ] Plan approved
-- [ ] Implementation started
+- [x] Implementation started (Dart API created)
 - [ ] Implementation complete
 - [ ] Documentation drafted
 - [ ] Documentation approved
@@ -36,8 +36,18 @@ DRAFTING
   - `legacy/legacy-mahabharata-render-engine-android-java/` (View+Canvas tiling + zoom/pan)
   - `legacy/legacy-mahabharata-render-engine-ios-swift/` (CATiledLayer tiling + UIScrollView zoom)
 - Key shared invariant across Android+iOS: **tile size = 512** and **tile filename template uses `{0}{1}{2}`** where `{0}=zoom*1000`, `{1}=col`, `{2}=row`.
+- **Decision**: `.comics` archive path передаётся целиком в нативную часть
+
+## Dart API Created
+
+- `lib/flutter_comics.dart` — main export
+- `lib/src/models.dart` — ComicsInfo, HitTestResult, ScrollEvent, LayerTapEvent, ComicsConfig
+- `lib/src/comics_viewer.dart` — ComicsViewer widget
+- `lib/src/comics_viewer_controller.dart` — ComicsViewerController
 
 ## Next Actions
 
-1. Review `01-requirements.md` for plugin scope fit (Flutter+natives).
-2. Decide minimal native surface API for Flutter (methods/events) and lock it in specs.
+1. Review and approve specifications (`02-specifications.md`)
+2. Adapt native code (fix package names, remove legacy dependencies)
+3. Implement Platform View factories (Android + iOS)
+4. Wire up Method Channel handlers

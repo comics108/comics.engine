@@ -1,15 +1,14 @@
-package com.fulldome.mahabharata.model.visual;
+package net.nativemind.comics.flutter_comics.model.visual;
 
 import android.animation.FloatEvaluator;
 import android.animation.IntEvaluator;
 import android.graphics.Matrix;
 
-import com.fulldome.mahabharata.model.Settings;
-import com.fulldome.mahabharata.model.visual.animation.AlphaAnim;
-import com.fulldome.mahabharata.model.visual.animation.LayerAnim;
-import com.fulldome.mahabharata.model.visual.animation.RotateAnim;
-import com.fulldome.mahabharata.model.visual.animation.ScaleAnim;
-import com.fulldome.mahabharata.model.visual.animation.TranslateAnim;
+import net.nativemind.comics.flutter_comics.model.visual.animation.AlphaAnim;
+import net.nativemind.comics.flutter_comics.model.visual.animation.LayerAnim;
+import net.nativemind.comics.flutter_comics.model.visual.animation.RotateAnim;
+import net.nativemind.comics.flutter_comics.model.visual.animation.ScaleAnim;
+import net.nativemind.comics.flutter_comics.model.visual.animation.TranslateAnim;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +31,11 @@ public class Layer {
 	private transient final ArrayList<AlphaAnim> alphas = new ArrayList<>();
 	private transient ViewData viewData = new ViewData();
 	private transient Matrix inverse = new Matrix();
+	private transient int languageIndex = 0;
+
+	public void setLanguageIndex(int index) {
+		this.languageIndex = index;
+	}
 
 	public void prepare() {
 		for (LayerAnim anim : animations) {
@@ -76,7 +80,8 @@ public class Layer {
 	public Image getImage() {
 		if (images == null || images.isEmpty())
 			return null;
-		Image image = images.get(Settings.getInstance().getLanguage().ordinal());
+		int index = Math.min(languageIndex, images.size() - 1);
+		Image image = images.get(index);
 		if (!image.isEmpty())
 			return image;
 
@@ -90,7 +95,8 @@ public class Layer {
 	public String getPopup() {
 		if (images == null || images.isEmpty())
 			return null;
-		Image image = images.get(Settings.getInstance().getLanguage().ordinal());
+		int index = Math.min(languageIndex, images.size() - 1);
+		Image image = images.get(index);
 		if (image.hasPopup())
 			return image.getPopup();
 

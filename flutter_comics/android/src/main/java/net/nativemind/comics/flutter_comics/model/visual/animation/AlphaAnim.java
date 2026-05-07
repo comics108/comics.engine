@@ -1,8 +1,8 @@
-package com.fulldome.mahabharata.model.visual.animation;
+package net.nativemind.comics.flutter_comics.model.visual.animation;
 
 import androidx.annotation.FloatRange;
 
-import com.fulldome.mahabharata.model.visual.Layer;
+import net.nativemind.comics.flutter_comics.model.visual.Layer;
 
 public class AlphaAnim extends LayerAnim {
 	private float alpha;

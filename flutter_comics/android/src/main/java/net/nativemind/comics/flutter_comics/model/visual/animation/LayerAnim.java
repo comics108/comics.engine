@@ -1,10 +1,7 @@
-package com.fulldome.mahabharata.model.visual.animation;
+package net.nativemind.comics.flutter_comics.model.visual.animation;
 
-import com.fulldome.mahabharata.model.LayerAnimTypeAdapter;
-import com.fulldome.mahabharata.model.visual.Layer;
-import com.google.gson.annotations.JsonAdapter;
+import net.nativemind.comics.flutter_comics.model.visual.Layer;
 
-@JsonAdapter(LayerAnimTypeAdapter.class)
 public abstract class LayerAnim extends Anim {
 	public LayerAnim interpolate(LayerAnim endAnim, int scrollOffset) {
 		int scrollObject = scrollOffset - endAnim.getStart();

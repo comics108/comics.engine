@@ -2,7 +2,7 @@
 ///
 /// A Flutter plugin for displaying comics with native tiled rendering,
 /// scroll-driven animations, and interactive layers.
-library flutter_comics;
+library;
 
 export 'src/models.dart';
 export 'src/comics_viewer.dart';

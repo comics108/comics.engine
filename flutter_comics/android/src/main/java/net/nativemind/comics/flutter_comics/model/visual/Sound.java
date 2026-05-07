@@ -1,16 +1,13 @@
-package com.fulldome.mahabharata.model.visual;
+package net.nativemind.comics.flutter_comics.model.visual;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.media.AudioManager;
 import androidx.annotation.FloatRange;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
-import com.fulldome.mahabharata.model.ComicsDescriptor;
-import com.fulldome.mahabharata.model.visual.animation.SoundAnim;
-import com.ironwaterstudio.utils.SoundManager;
+import net.nativemind.comics.flutter_comics.model.visual.animation.SoundAnim;
 
 import java.util.ArrayList;
 
@@ -20,21 +17,20 @@ public class Sound {
 	private String file;
 	private ArrayList<SoundAnim> animations;
 
-	private transient SoundManager soundManager = null;
+	// TODO: Replace with actual sound implementation
+	private transient boolean playing = false;
+	private transient boolean prepared = false;
 	private transient float oldVolume = 0f;
 	private transient float newVolume = 1f;
 	private transient float volume = 0f;
 	private transient boolean looping = false;
-	private transient ComicsDescriptor descriptor;
+	private transient String archivePath;
 	private transient ValueAnimator volumeAnimator = ValueAnimator.ofFloat(0f, 1f);
 	private transient ValueAnimator.AnimatorUpdateListener volumeUpdateListener = new ValueAnimator.AnimatorUpdateListener() {
 		private float oldValue = -1;
 
 		@Override
 		public void onAnimationUpdate(ValueAnimator valueAnimator) {
-			if (soundManager == null)
-				return;
-
 			float value = (float) valueAnimator.getAnimatedValue();
 			if (oldValue == value)
 				return;
@@ -47,27 +43,8 @@ public class Sound {
 		@Override
 		public void onAnimationEnd(Animator animation) {
 			super.onAnimationEnd(animation);
-			if (volume == 0 && soundManager != null)
+			if (volume == 0)
 				stop(false);
-		}
-	};
-	private transient final SoundManager.SoundListener listener = new SoundManager.SoundListener() {
-		@Override
-		public void onPrepare() {
-			playInternal();
-		}
-
-		@Override
-		public void onPlay(boolean isPlaying, int position) {
-
-		}
-
-		@Override
-		public void onCompleted() {
-		}
-
-		@Override
-		public void onError() {
 		}
 	};
 
@@ -86,13 +63,11 @@ public class Sound {
 		return animations;
 	}
 
-	public void prepare(Context context, ComicsDescriptor descriptor) {
-		this.descriptor = descriptor;
-		if (soundManager == null) {
-			soundManager = new SoundManager(context, AudioManager.STREAM_MUSIC);
-			soundManager.addSoundListener(listener);
-			soundManager.setRequestFocus(false);
-		}
+	public void prepare(Context context, String archivePath) {
+		this.archivePath = archivePath;
+		// TODO: Initialize sound manager here
+		// Stub implementation - sound playback not yet implemented
+		prepared = true;
 	}
 
 	public void process(int scrollOffset, int previousScrollOffset, boolean skipPointSounds) {
@@ -112,20 +87,23 @@ public class Sound {
 	}
 
 	public boolean isPlaying() {
-		return soundManager != null && soundManager.isPrepared() && soundManager.isPlaying();
+		// TODO: Return actual playing state when sound manager is implemented
+		return playing && prepared;
 	}
 
 	public void play(boolean looping) {
 		this.looping = looping;
-		if (!isPlaying())
-			soundManager.prepare(descriptor.getSound(getFile()));
+		if (!isPlaying()) {
+			// TODO: Prepare and play sound from archivePath + getFile()
+			// Stub implementation
+			playInternal();
+		}
 	}
 
 	private void playInternal() {
-		soundManager.setLooping(looping);
-		if (!soundManager.isPlaying())
-			soundManager.seekTo(0);
-		soundManager.playPause(true);
+		// TODO: Implement actual sound playback
+		// Stub implementation
+		playing = true;
 		if (looping)
 			animateVolume(1f);
 		else
@@ -133,23 +111,24 @@ public class Sound {
 	}
 
 	public void resume() {
-		if (soundManager != null)
-			soundManager.addSoundListener(listener);
-		if (soundManager != null && soundManager.isPrepared() && !soundManager.isPlaying())
-			soundManager.playPause(true);
+		// TODO: Resume sound playback
+		// Stub implementation
+		if (prepared && !playing) {
+			playing = true;
+		}
 	}
 
 	public void pause() {
-		if (isPlaying())
-			soundManager.playPause(false);
-		if (soundManager != null)
-			soundManager.removeSoundListener(listener);
+		// TODO: Pause sound playback
+		// Stub implementation
+		if (isPlaying()) {
+			playing = false;
+		}
 	}
 
 	public void stop(boolean anim) {
 		if (!isPlaying()) {
-			if (soundManager != null && soundManager.isInitialized())
-				soundManager.release();
+			// TODO: Release sound resources
 			return;
 		}
 
@@ -157,33 +136,25 @@ public class Sound {
 			animateVolume(0f);
 		} else {
 			setVolume(0f);
-			soundManager.playPause(false);
-			soundManager.release();
+			playing = false;
+			// TODO: Release sound resources
 		}
 	}
 
 	private void animateVolume(@FloatRange(from = 0f, to = 1f) float volume) {
-		if (soundManager == null)
-			return;
-
-		soundManager.setVolume(this.volume, this.volume);
 		oldVolume = this.volume;
 		newVolume = volume;
 		volumeAnimator.start();
 	}
 
 	private void setVolume(@FloatRange(from = 0f, to = 1f) float volume) {
-		if (soundManager == null)
-			return;
-
 		this.volume = volume;
-		soundManager.setVolume(this.volume, this.volume);
+		// TODO: Set actual volume when sound manager is implemented
 	}
 
 	public void release() {
-		if (soundManager != null) {
-			soundManager.release();
-			soundManager = null;
-		}
+		// TODO: Release sound manager resources
+		playing = false;
+		prepared = false;
 	}
 }

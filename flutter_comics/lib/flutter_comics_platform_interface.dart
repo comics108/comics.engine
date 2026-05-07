@@ -1,7 +1,6 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'flutter_comics_method_channel.dart';
-import 'src/models.dart';
 
 /// Platform interface for flutter_comics plugin.
 ///

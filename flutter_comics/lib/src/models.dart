@@ -1,5 +1,3 @@
-/// Data models for flutter_comics plugin
-
 /// Information about a loaded comics scene
 class ComicsInfo {
   /// Width of the scene in logical pixels

@@ -1,8 +1,6 @@
-package com.fulldome.mahabharata.model.visual;
+package net.nativemind.comics.flutter_comics.model.visual;
 
 import android.text.TextUtils;
-
-import com.fulldome.mahabharata.model.ComicsDescriptor;
 
 public class Image {
 	private String file;
@@ -14,10 +12,6 @@ public class Image {
 		return file;
 	}
 
-	public String getFile(ComicsDescriptor.ImageType type) {
-		return type.getName() + getFile();
-	}
-
 	public int getWidth() {
 		return width;
 	}
@@ -27,14 +21,14 @@ public class Image {
 	}
 
 	public String getPopup() {
-		return ComicsDescriptor.ImageType.LAYER.getName() + popup;
+		return popup;
 	}
 
 	public boolean isEmpty() {
-		return TextUtils.isEmpty(getFile());
+		return TextUtils.isEmpty(file);
 	}
 
 	public boolean hasPopup() {
-		return !TextUtils.isEmpty(getPopup());
+		return !TextUtils.isEmpty(popup);
 	}
 }

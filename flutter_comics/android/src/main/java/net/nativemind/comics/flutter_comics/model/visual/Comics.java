@@ -1,16 +1,6 @@
-package com.fulldome.mahabharata.model.visual;
+package net.nativemind.comics.flutter_comics.model.visual;
 
 import android.content.Context;
-
-import com.fulldome.mahabharata.model.BaseState;
-import com.fulldome.mahabharata.model.ComicsDescriptor;
-import com.fulldome.mahabharata.model.Settings;
-import com.fulldome.mahabharata.utils.AnalyticsEvents;
-import com.fulldome.mahabharata.utils.ImageManager;
-import com.ironwaterstudio.server.serializers.JsonSerializer;
-import com.ironwaterstudio.server.serializers.Serializer;
-import com.ironwaterstudio.utils.FileUtils;
-import com.ironwaterstudio.utils.FbUtils;
 
 import java.util.ArrayList;
 
@@ -19,10 +9,11 @@ public class Comics {
 	private int height;
 	private ArrayList<Layer> layers;
 	private ArrayList<Sound> sounds;
-	private transient ComicsDescriptor descriptor = null;
+	private transient String archivePath = null;
 	private transient int sampleSize = -1;
 	private transient int previousScrollOffset = -1;
 	private transient boolean skipPointSounds = false;
+	private transient boolean soundOn = true;
 
 	public int getWidth() {
 		return width;
@@ -40,8 +31,8 @@ public class Comics {
 		return sounds;
 	}
 
-	public ComicsDescriptor getDescriptor() {
-		return descriptor;
+	public String getArchivePath() {
+		return archivePath;
 	}
 
 	public int getSampleSize() {
@@ -56,13 +47,32 @@ public class Comics {
 		this.skipPointSounds = skipPointSounds;
 	}
 
-	public void prepare(Context context, ComicsDescriptor descriptor) {
-		this.descriptor = descriptor;
+	public boolean isSoundOn() {
+		return soundOn;
+	}
+
+	public void setSoundOn(boolean soundOn) {
+		this.soundOn = soundOn;
+	}
+
+	public void prepare(Context context, String archivePath) {
+		this.archivePath = archivePath;
 		sampleSize = computeSampleSize(context);
 		for (Layer layer : getLayers())
 			layer.prepare();
 		for (Sound sound : getSounds())
-			sound.prepare(context, getDescriptor());
+			sound.prepare(context, archivePath);
+	}
+
+	public void prepare(Context context, String archivePath, int languageIndex) {
+		this.archivePath = archivePath;
+		sampleSize = computeSampleSize(context);
+		for (Layer layer : getLayers()) {
+			layer.setLanguageIndex(languageIndex);
+			layer.prepare();
+		}
+		for (Sound sound : getSounds())
+			sound.prepare(context, archivePath);
 	}
 
 	public void release() {
@@ -73,16 +83,11 @@ public class Comics {
 	public void process(int scrollOffset) {
 		for (Layer layer : getLayers())
 			layer.buildMatrixAndAlpha(scrollOffset);
-		if (Settings.getInstance().isSoundOn()) {
+		if (soundOn) {
 			for (Sound sound : getSounds())
 				sound.process(scrollOffset, previousScrollOffset, skipPointSounds);
 		}
 		previousScrollOffset = scrollOffset;
-	}
-
-	public void cancelLayerTasks() {
-		for (Layer layer : layers)
-			ImageManager.cancel(getDescriptor(), layer.getImage().getFile(ComicsDescriptor.ImageType.LAYER));
 	}
 
 	public boolean hasPreview() {
@@ -106,24 +111,24 @@ public class Comics {
 	}
 
 	public void toggleSounds() {
-		toggleSoundsSettings();
+		soundOn = !soundOn;
 		updateSoundsState();
 	}
 
 	public void updateSoundsState() {
-		if (Settings.getInstance().isSoundOn())
+		if (soundOn)
 			resumeSoundsInternal();
 		else
 			pauseSoundsInternal();
 	}
 
 	public void pauseSounds() {
-		if (Settings.getInstance().isSoundOn())
+		if (soundOn)
 			pauseSoundsInternal();
 	}
 
 	public void resumeSounds() {
-		if (Settings.getInstance().isSoundOn())
+		if (soundOn)
 			resumeSoundsInternal();
 	}
 
@@ -135,21 +140,5 @@ public class Comics {
 	private void resumeSoundsInternal() {
 		for (Sound audio : getSounds())
 			audio.resume();
-	}
-
-	public static void toggleSoundsSettings() {
-		Settings.getInstance().setSoundOn(!Settings.getInstance().isSoundOn());
-		Settings.getInstance().save();
-		FbUtils.logEvent(AnalyticsEvents.CATEGORY_SOUNDS, AnalyticsEvents.ACTION_POWER + " " + (Settings.getInstance().isSoundOn() ? "on" : "off"));
-	}
-
-	public static Comics create(Context context, BaseState state) {
-		ComicsDescriptor descriptor = state != null && state.isDownloaded() ? ComicsDescriptor.create(state.getSavedFile(context)) : null;
-		if (descriptor == null)
-			return null;
-		Comics comics = Serializer.get(JsonSerializer.class).read(FileUtils.readStream(descriptor.getData()), Comics.class);
-		if (comics != null)
-			comics.prepare(context, descriptor);
-		return comics;
 	}
 }
