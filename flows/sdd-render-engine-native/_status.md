@@ -2,15 +2,15 @@
 
 ## Current Phase
 
-SPECIFICATIONS
+SPLIT (deprecated)
 
 ## Phase Status
 
-READY FOR REVIEW
+ARCHIVED — спецификации разделены на платформенные документы
 
 ## Last Updated
 
-2026-05-07 by Claude Opus 4.5
+2026-05-08 by Claude
 
 ## Blockers
 
@@ -19,35 +19,43 @@ READY FOR REVIEW
 ## Progress
 
 - [x] Requirements drafted
-- [ ] Requirements approved
-- [x] Specifications drafted (with Flutter API)
-- [ ] Specifications approved
-- [x] Plan drafted
-- [ ] Plan approved
+- [x] Specifications drafted
+- [x] **SPLIT** → платформенные спецификации:
+  - Android: `../sdd-comics-engine-flutter-android/specifications-ru.md`
+  - iOS: `../sdd-comics-engine-flutter-ios/specifications-ru.md`
 - [x] Implementation started (Dart API created)
 - [ ] Implementation complete
-- [ ] Documentation drafted
-- [ ] Documentation approved
 
 ## Context Notes
 
+**Этот SDD устарел.** Спецификации были разделены на платформенные документы:
+
+| Платформа | Новый документ |
+|-----------|----------------|
+| Android | `sdd-comics-engine-flutter-android/` |
+| iOS | `sdd-comics-engine-flutter-ios/` |
+| Web | `sdd-comics-engine-flutter-web/` |
+| Unity | `sdd-comics-engine-csharp-unity/` |
+| Формат `.comics` | `sdd-comics-format/` |
+
+Оригинальные файлы в этой директории сохранены для истории, но ссылаться следует на платформенные документы.
+
+## Legacy Context
+
 - Extracted legacy render behavior from:
-  - `legacy/legacy-bhagavadgita-render-engine-web-css/` (CreateJS/Adobe Animate canvas export)
-  - `legacy/legacy-mahabharata-render-engine-android-java/` (View+Canvas tiling + zoom/pan)
-  - `legacy/legacy-mahabharata-render-engine-ios-swift/` (CATiledLayer tiling + UIScrollView zoom)
-- Key shared invariant across Android+iOS: **tile size = 512** and **tile filename template uses `{0}{1}{2}`** where `{0}=zoom*1000`, `{1}=col`, `{2}=row`.
-- **Decision**: `.comics` archive path передаётся целиком в нативную часть
+  - `legacy/legacy-bhagavadgita-render-engine-web-css/`
+  - `legacy/legacy-mahabharata-render-engine-android-java/`
+  - `legacy/legacy-mahabharata-render-engine-ios-swift/`
+- Key shared invariant: tile size = 512, tile filename template `{0}_{1}_{2}`
 
-## Dart API Created
+## Dart API Created (in flutter_comics)
 
-- `lib/flutter_comics.dart` — main export
-- `lib/src/models.dart` — ComicsInfo, HitTestResult, ScrollEvent, LayerTapEvent, ComicsConfig
-- `lib/src/comics_viewer.dart` — ComicsViewer widget
-- `lib/src/comics_viewer_controller.dart` — ComicsViewerController
+- `lib/flutter_comics.dart`
+- `lib/src/models.dart`
+- `lib/src/comics_viewer.dart`
+- `lib/src/comics_viewer_controller.dart`
 
 ## Next Actions
 
-1. Review and approve specifications (`02-specifications.md`)
-2. Adapt native code (fix package names, remove legacy dependencies)
-3. Implement Platform View factories (Android + iOS)
-4. Wire up Method Channel handlers
+1. ~~Review and approve specifications~~ → См. платформенные документы
+2. Продолжить реализацию Android/iOS нативных частей
