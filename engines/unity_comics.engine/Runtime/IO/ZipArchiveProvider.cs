@@ -3,12 +3,16 @@ using System.IO;
 using System.IO.Compression;
 using System.Collections.Generic;
 using UnityEngine;
+using NativeMind.ComicsViewer.Core;
 
 namespace NativeMind.ComicsViewer.IO
 {
     /// <summary>
     /// Provides access to .comics archive (ZIP) contents
+    /// DEPRECATED: Use ZipArchiveSource instead which implements IComicsSource.
+    /// This class is kept for backwards compatibility.
     /// </summary>
+    [Obsolete("Use ZipArchiveSource instead. This class is kept for backwards compatibility.")]
     public class ZipArchiveProvider : IDisposable
     {
         private readonly string _archivePath;

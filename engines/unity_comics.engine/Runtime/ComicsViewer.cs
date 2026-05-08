@@ -6,6 +6,9 @@ using NativeMind.ComicsViewer.IO;
 using NativeMind.ComicsViewer.Rendering;
 using NativeMind.ComicsViewer.Audio;
 
+// Backwards compatibility alias
+using ZipArchiveProvider = NativeMind.ComicsViewer.IO.ZipArchiveSource;
+
 namespace NativeMind.ComicsViewer
 {
     /// <summary>
@@ -54,7 +57,7 @@ namespace NativeMind.ComicsViewer
 
         // Private state
         private Comics _comics;
-        private ZipArchiveProvider _archive;
+        private IComicsSource _source;
         private AnimationProcessor _animationProcessor;
         private TileRenderer _tileRenderer;
         private SoundManager _soundManager;
@@ -105,19 +108,36 @@ namespace NativeMind.ComicsViewer
         /// </summary>
         public void LoadArchive(string path)
         {
+            archivePath = path;
+            var source = new ZipArchiveSource(path);
+            source.Prepare();
+            Initialize(source);
+        }
+
+        /// <summary>
+        /// Load comics from unpacked folder (for editor preview)
+        /// </summary>
+        public void LoadFolder(string folderPath)
+        {
+            var source = new FolderSource(folderPath);
+            source.Prepare();
+            Initialize(source);
+        }
+
+        /// <summary>
+        /// Initialize with any source (for dependency injection)
+        /// </summary>
+        public void Initialize(IComicsSource source)
+        {
             try
             {
                 // Cleanup previous
                 Unload();
 
-                archivePath = path;
-
-                // Extract archive
-                _archive = new ZipArchiveProvider(path);
-                _archive.Extract();
+                _source = source;
 
                 // Parse data.json
-                string jsonString = _archive.ReadDataJson();
+                string jsonString = _source.ReadDataJson();
                 _comics = ComicsParser.Parse(jsonString);
 
                 // Setup camera for content size
@@ -125,8 +145,14 @@ namespace NativeMind.ComicsViewer
 
                 // Initialize systems
                 _animationProcessor = new AnimationProcessor(_comics);
-                _tileRenderer = new TileRenderer(_comics, _archive, _contentRoot, languageIndex);
-                _soundManager = new SoundManager(_archive, _comics, soundEnabled);
+                _tileRenderer = new TileRenderer(_comics, _source, _contentRoot, languageIndex);
+
+                // Sound manager only for read-only sources (runtime)
+                // Editor can enable separately if needed
+                if (_source.IsReadOnly)
+                {
+                    _soundManager = new SoundManager(_source, _comics, soundEnabled);
+                }
 
                 // Calculate scroll bounds
                 _maxScroll = Mathf.Max(0, _comics.height - _viewportHeight);
@@ -146,6 +172,40 @@ namespace NativeMind.ComicsViewer
             catch (Exception e)
             {
                 Debug.LogError($"Failed to load comics: {e.Message}");
+                OnError?.Invoke(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Refresh from source after editor modifies document
+        /// </summary>
+        public void RefreshFromSource()
+        {
+            if (_source == null) return;
+
+            try
+            {
+                _source.Invalidate();
+
+                // Reload data
+                string jsonString = _source.ReadDataJson();
+                _comics = ComicsParser.Parse(jsonString);
+
+                // Recreate animation processor
+                _animationProcessor = new AnimationProcessor(_comics);
+
+                // Invalidate tile cache
+                _tileRenderer?.InvalidateCache();
+
+                // Recalculate bounds
+                _maxScroll = Mathf.Max(0, _comics.height - _viewportHeight);
+
+                // Re-render
+                UpdateViewport();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Failed to refresh comics: {e.Message}");
                 OnError?.Invoke(e.Message);
             }
         }
@@ -315,13 +375,18 @@ namespace NativeMind.ComicsViewer
 
             _animationProcessor = null;
 
-            _archive?.Dispose();
-            _archive = null;
+            _source?.Dispose();
+            _source = null;
 
             _comics = null;
             _scrollY = 0;
             _maxScroll = 0;
         }
+
+        /// <summary>
+        /// Get the current comics source (for advanced usage)
+        /// </summary>
+        public IComicsSource Source => _source;
 
         private void OnDestroy()
         {

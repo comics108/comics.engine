@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using NativeMind.ComicsViewer.Models;
-using NativeMind.ComicsViewer.IO;
+using NativeMind.ComicsViewer.Core;
 
 namespace NativeMind.ComicsViewer.Audio
 {
@@ -11,7 +11,7 @@ namespace NativeMind.ComicsViewer.Audio
     /// </summary>
     public class SoundManager : IDisposable
     {
-        private readonly ZipArchiveProvider _archive;
+        private readonly IComicsSource _source;
         private readonly Comics _comics;
         private readonly GameObject _audioRoot;
         private readonly Dictionary<string, AudioSource> _audioSources;
@@ -21,9 +21,9 @@ namespace NativeMind.ComicsViewer.Audio
         private bool _enabled;
         private float _lastScrollY;
 
-        public SoundManager(ZipArchiveProvider archive, Comics comics, bool enabled = true)
+        public SoundManager(IComicsSource source, Comics comics, bool enabled = true)
         {
-            _archive = archive;
+            _source = source;
             _comics = comics;
             _enabled = enabled;
 
@@ -52,7 +52,7 @@ namespace NativeMind.ComicsViewer.Audio
                 return cachedClip;
             }
 
-            string soundPath = _archive.GetSoundPath(src);
+            string soundPath = _source.GetSoundPath(src);
             if (string.IsNullOrEmpty(soundPath) || !System.IO.File.Exists(soundPath))
             {
                 Debug.LogWarning($"Sound not found: {src}");

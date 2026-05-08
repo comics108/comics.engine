@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using NativeMind.ComicsViewer.Models;
-using NativeMind.ComicsViewer.IO;
+using NativeMind.ComicsViewer.Core;
 
 namespace NativeMind.ComicsViewer.Rendering
 {
@@ -14,17 +14,17 @@ namespace NativeMind.ComicsViewer.Rendering
         private const float PRELOAD_MARGIN = 512f;
 
         private readonly Comics _comics;
-        private readonly ZipArchiveProvider _archive;
+        private readonly IComicsSource _source;
         private readonly TileCache _cache;
         private readonly Transform _parent;
         private readonly int _languageIndex;
 
         private readonly List<LayerRenderer> _layerRenderers;
 
-        public TileRenderer(Comics comics, ZipArchiveProvider archive, Transform parent, int languageIndex = 0)
+        public TileRenderer(Comics comics, IComicsSource source, Transform parent, int languageIndex = 0)
         {
             _comics = comics;
-            _archive = archive;
+            _source = source;
             _parent = parent;
             _languageIndex = languageIndex;
             _cache = new TileCache(150);
@@ -38,8 +38,20 @@ namespace NativeMind.ComicsViewer.Rendering
             for (int i = 0; i < _comics.layers.Count; i++)
             {
                 var layer = _comics.layers[i];
-                var layerRenderer = new LayerRenderer(layer, _archive, _cache, _parent, i, _languageIndex);
+                var layerRenderer = new LayerRenderer(layer, _source, _cache, _parent, i, _languageIndex);
                 _layerRenderers.Add(layerRenderer);
+            }
+        }
+
+        /// <summary>
+        /// Invalidate tile cache - called when editor modifies files
+        /// </summary>
+        public void InvalidateCache()
+        {
+            _cache.Clear();
+            foreach (var renderer in _layerRenderers)
+            {
+                renderer.ClearTiles();
             }
         }
 
@@ -93,7 +105,7 @@ namespace NativeMind.ComicsViewer.Rendering
     internal class LayerRenderer
     {
         private readonly Layer _layer;
-        private readonly ZipArchiveProvider _archive;
+        private readonly IComicsSource _source;
         private readonly TileCache _cache;
         private readonly GameObject _layerObject;
         private readonly Dictionary<string, GameObject> _tileObjects;
@@ -102,10 +114,10 @@ namespace NativeMind.ComicsViewer.Rendering
         private readonly int _cols;
         private readonly int _rows;
 
-        public LayerRenderer(Layer layer, ZipArchiveProvider archive, TileCache cache, Transform parent, int sortOrder, int languageIndex)
+        public LayerRenderer(Layer layer, IComicsSource source, TileCache cache, Transform parent, int sortOrder, int languageIndex)
         {
             _layer = layer;
-            _archive = archive;
+            _source = source;
             _cache = cache;
             _languageIndex = languageIndex;
             _tileObjects = new Dictionary<string, GameObject>();
@@ -167,14 +179,14 @@ namespace NativeMind.ComicsViewer.Rendering
             string imageSrc = GetImageSrc();
             if (string.IsNullOrEmpty(imageSrc)) return;
 
-            string tilePath = _archive.GetTilePath(imageSrc, col, row);
+            string tilePath = _source.GetTilePath(imageSrc, col, row);
             if (tilePath == null) return;
 
             // Load or get from cache
             Texture2D texture = _cache.Get(key);
             if (texture == null)
             {
-                texture = _archive.LoadTileTexture(tilePath);
+                texture = _source.LoadTileTexture(tilePath);
                 if (texture != null)
                 {
                     _cache.Put(key, texture);
@@ -279,8 +291,14 @@ namespace NativeMind.ComicsViewer.Rendering
         {
             if (_languageIndex == index) return;
             _languageIndex = index;
+            ClearTiles();
+        }
 
-            // Clear all tiles to reload with new language
+        /// <summary>
+        /// Clear all tiles - called on language change or cache invalidation
+        /// </summary>
+        public void ClearTiles()
+        {
             foreach (var tileObj in _tileObjects.Values)
             {
                 Object.Destroy(tileObj);
