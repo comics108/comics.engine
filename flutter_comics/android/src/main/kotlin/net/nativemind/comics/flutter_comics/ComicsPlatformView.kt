@@ -12,6 +12,8 @@ import io.flutter.plugin.platform.PlatformView
 import net.nativemind.comics.flutter_comics.controls.ZoomFrameLayout
 import net.nativemind.comics.flutter_comics.controls.LayersView
 import net.nativemind.comics.flutter_comics.model.visual.Comics
+import net.nativemind.comics.flutter_comics.model.visual.Layer
+import net.nativemind.comics.flutter_comics.model.visual.Sound
 import org.json.JSONObject
 import java.io.File
 import java.util.zip.ZipFile
@@ -189,7 +191,13 @@ class ComicsPlatformView(
             heightField.isAccessible = true
             heightField.setInt(comics, json.optInt("height", 1920))
 
-            // TODO: Parse layers and sounds arrays
+            val layersField = Comics::class.java.getDeclaredField("layers")
+            layersField.isAccessible = true
+            layersField.set(comics, java.util.ArrayList<Layer>())
+
+            val soundsField = Comics::class.java.getDeclaredField("sounds")
+            soundsField.isAccessible = true
+            soundsField.set(comics, java.util.ArrayList<Sound>())
         } catch (e: Exception) {
             e.printStackTrace()
         }

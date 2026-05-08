@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_comics/flutter_comics.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -36,18 +39,31 @@ class _ComicsExamplePageState extends State<ComicsExamplePage> {
   int _scrollOffset = 0;
   int _maxOffset = 0;
   String? _error;
+  String? _comicsPath;
 
-  // Path to the .comics file
-  // In a real app, this would be downloaded or extracted from assets
-  String get _comicsPath {
-    // Adjust this path to where your .comics file is located
-    // For development, using absolute path to sample file
-    if (Platform.isAndroid) {
-      return '/data/local/tmp/bhagavadgita.comics';
-    } else if (Platform.isIOS) {
-      return '/tmp/bhagavadgita.comics';
+  @override
+  void initState() {
+    super.initState();
+    _extractBundledSample();
+  }
+
+  /// Copies `assets/sample.comics` to app documents so native code can open a real file path.
+  Future<void> _extractBundledSample() async {
+    try {
+      final dir = await getApplicationDocumentsDirectory();
+      final file = File('${dir.path}/sample.comics');
+      final data = await rootBundle.load('assets/sample.comics');
+      final bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      await file.writeAsBytes(bytes, flush: true);
+      if (!mounted) return;
+      setState(() => _comicsPath = file.path);
+    } catch (e, st) {
+      debugPrint('_extractBundledSample failed: $e\n$st');
+      if (!mounted) return;
+      setState(() {
+        _error = 'Failed to extract bundled sample.comics: $e';
+      });
     }
-    return '';
   }
 
   @override
@@ -103,6 +119,35 @@ class _ComicsExamplePageState extends State<ComicsExamplePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_comicsPath == null && _error == null) {
+      return const Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('Preparing sample archive...'),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_comicsPath == null && _error != null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Flutter Comics')),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text(_error!, textAlign: TextAlign.center),
+          ),
+        ),
+      );
+    }
+
+    final path = _comicsPath!;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter Comics'),
@@ -124,7 +169,6 @@ class _ComicsExamplePageState extends State<ComicsExamplePage> {
       ),
       body: Column(
         children: [
-          // Info bar
           Container(
             padding: const EdgeInsets.all(8),
             color: Colors.grey[200],
@@ -132,23 +176,25 @@ class _ComicsExamplePageState extends State<ComicsExamplePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 if (_comicsInfo != null)
-                  Text(
-                    '${_comicsInfo!.width}x${_comicsInfo!.height}, '
-                    '${_comicsInfo!.layerCount} layers',
+                  Expanded(
+                    child: Text(
+                      '${_comicsInfo!.width}x${_comicsInfo!.height}, '
+                      '${_comicsInfo!.layerCount} layers',
+                    ),
                   )
                 else if (_error != null)
-                  Text('Error: $_error', style: const TextStyle(color: Colors.red))
+                  Expanded(
+                    child: Text('Error: $_error', style: const TextStyle(color: Colors.red)),
+                  )
                 else
-                  const Text('Loading...'),
+                  const Expanded(child: Text('Loading...')),
                 Text('Scroll: $_scrollOffset / $_maxOffset'),
               ],
             ),
           ),
-          // Progress bar
           LinearProgressIndicator(
             value: _maxOffset > 0 ? _scrollOffset / _maxOffset : 0,
           ),
-          // Comics viewer
           Expanded(
             child: _error != null
                 ? Center(
@@ -159,18 +205,16 @@ class _ComicsExamplePageState extends State<ComicsExamplePage> {
                         const SizedBox(height: 16),
                         Text(_error!, textAlign: TextAlign.center),
                         const SizedBox(height: 16),
-                        const Text(
-                          'Make sure bhagavadgita.comics is copied to:\n'
-                          '- Android: /data/local/tmp/\n'
-                          '- iOS: /tmp/',
+                        Text(
+                          'Archive path (debug):\n$path',
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                       ],
                     ),
                   )
                 : ComicsViewer(
-                    archivePath: _comicsPath,
+                    archivePath: path,
                     languageIndex: 0,
                     zoomEnabled: false,
                     soundEnabled: true,
