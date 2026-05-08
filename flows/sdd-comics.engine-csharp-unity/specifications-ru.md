@@ -104,6 +104,47 @@ template
 
 ---
 
+---
+
+## 6. Shared Core Refactoring
+
+> Добавлено 2026-05-08
+
+### 6.1 IComicsSource Abstraction
+
+Текущая реализация тесно связана с `ZipArchiveProvider`. Для поддержки редактора требуется абстракция:
+
+```csharp
+interface IComicsSource
+{
+    Comics LoadData();
+    Texture2D LoadTile(string path);
+    AudioClip LoadSound(string path);
+    bool IsReadOnly { get; }
+    void Invalidate();
+}
+```
+
+### 6.2 Implementations
+
+| Source | Context | IsReadOnly |
+|--------|---------|------------|
+| `ZipArchiveSource` | Runtime (standalone) | true |
+| `FolderSource` | Editor (temp workspace) | false |
+
+### 6.3 Migration
+
+- `ZipArchiveProvider` → `ZipArchiveSource : IComicsSource`
+- Add `ComicsViewer.Initialize(IComicsSource)`
+- Add `ComicsViewer.LoadFolder(string)` for editor
+
+### Related
+
+- Detailed specs: `../sdd-comics.engine-shared-core/02-specifications.md`
+- ADR: `../adr-006-transform-composition-order/adr.md`
+
+---
+
 ## Утверждение
 
 - [ ] Reviewed by: [name]

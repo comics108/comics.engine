@@ -50,5 +50,11 @@ COMPLETE
 
 ## Next Actions
 
-1. Тестирование в Unity Editor
-2. Документация
+1. Implement IComicsSource abstraction (see `sdd-comics.engine-shared-core`)
+2. Refactor ZipArchiveProvider → ZipArchiveSource
+3. Add FolderSource for editor preview
+4. Тестирование в Unity Editor
+
+## Dependencies
+
+- `sdd-comics.engine-shared-core`: Shared abstraction layer (new)
