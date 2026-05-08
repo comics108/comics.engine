@@ -1,15 +1,23 @@
 # flutter_comics
 
-A new Flutter plugin project.
+Flutter plugin for integrating the NativeMind Comics Engine into Flutter apps.
 
 ## Getting Started
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/to/develop-plugins),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+- Add to your project:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```yaml
+dependencies:
+  flutter_comics: ^0.0.1
+```
+
+- Import:
+
+```dart
+import 'package:flutter_comics/flutter_comics.dart';
+```
+
+## Links
+
+- Repository: https://github.com/libsFlutter/flutter_comics
 

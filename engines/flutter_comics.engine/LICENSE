@@ -1,1 +1,93 @@
-TODO: Add your license here.
+# NativeMindNONC License Agreement
+
+### 1. General Provisions
+
+This agreement is governed by copyright laws and intellectual property regulations of the jurisdiction where the software is used.
+
+Copyright Holder: Software Development Company
+
+The product trademark is registered and owned by the copyright holder.
+
+Copyright © 2010-2025 Copyright Holder. All rights reserved.
+
+### 2. Usage Terms
+
+By using the software product ("Product"), you agree to accept the terms and conditions of this agreement. If you do not agree, please stop using the product immediately.
+
+#### 2.1. Source Code Publication
+
+When using the source code of the Product, you are obligated to:
+
+- Publish your source code through GitHub by creating a Fork of the official Repository
+- Keep it updated to reflect changes from the original
+- Clearly indicate that your source code is a Fork of the original Repository
+
+#### 2.2. Automatic Publication
+
+All publications must be conducted through GitHub Actions only.
+
+#### 2.3. Attribution
+
+When publishing products derived from the original Product, you must:
+
+- Credit the copyright holder with a link to the original Repository
+- Display a link to the original license agreement
+- Record changes in the README of your Repository
+
+#### 2.4. Malware Prohibition
+
+It is strictly prohibited to add malware or any dangerous code to the product.
+
+#### 2.5. Name and Interface Usage Restrictions
+
+It is prohibited to publish applications in any app store (Google Play, App Store, F-Droid, Microsoft Store, Huawei AppGallery, or other platforms) with names or interfaces similar to the original product that may cause confusion.
+
+#### 2.6. Commercial Use
+
+**Free for Non-Commercial Use**: This product is free for non-commercial use including:
+- Educational institutions (schools, universities, colleges)
+- Educational and training purposes
+- Research and development for non-commercial projects
+- Personal learning and development
+
+**Commercial Use Requires License**: Commercial use of this product requires a written license agreement from the copyright holder before any commercial activities including:
+- Selling or distributing for profit
+- Using in commercial products or services
+- Business applications
+- Any revenue-generating activities
+
+#### 2.7. Developer Rights and Company Structure
+
+All rights belong to specific developers who are part of the company that develops this software. Developers may:
+- Present code and work results at exhibitions and conferences
+- Showcase their technical achievements publicly
+- Use their work for professional portfolio and career development
+
+However, developers cannot:
+- Use the code or work results for personal commercial purposes
+- License the software independently outside the company structure
+- Transfer commercial rights without company authorization
+
+All commercial licensing must be conducted through the company that employs these developers.
+
+#### 2.8. License Standardization
+
+This license may become a standard and other companies may copy the license text for their own use, similar to MIT, Apache, or GPL licenses.
+
+#### 2.9. ShareAlike Requirement
+
+Any work created from this product must be published under the same license terms and in open source format through a Fork from the original Repository.
+
+### 3. Open Source Components
+
+The Product includes Open Source components licensed under different terms. Using the Product means you accept the terms of each component as well. Details are specified in the LICENSE.md file included with the product.
+
+### 4. Disclaimer
+
+This product is provided "as is" without any warranties, whether express or implied, including warranties of merchantability, fitness for a particular purpose, and non-infringement. The copyright holder shall not be liable for any damages arising from the use of the Product.
+
+### 5. License Violations
+
+In case of violation of this agreement, the copyright holder has the right to request cessation of product distribution and may take legal action or notify app stores to remove or suspend distribution of violating products.
+
+Any disputes shall be resolved according to the laws of the jurisdiction where the copyright holder is incorporated.
