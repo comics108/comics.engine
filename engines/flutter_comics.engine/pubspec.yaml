@@ -1,6 +1,6 @@
 name: flutter_comics
 description: Flutter plugin for integrating the NativeMind Comics Engine into Flutter apps (Android, iOS, desktop, web).
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/libsFlutter/flutter_comics
 repository: https://github.com/libsFlutter/flutter_comics
 issue_tracker: https://github.com/libsFlutter/flutter_comics/issues
