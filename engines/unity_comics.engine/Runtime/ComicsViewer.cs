@@ -388,6 +388,26 @@ namespace NativeMind.ComicsViewer
         /// </summary>
         public IComicsSource Source => _source;
 
+        /// <summary>
+        /// Get current layer transforms for given scroll position.
+        /// Used by editor for preview rendering.
+        /// </summary>
+        public LayerTransform[] GetLayerTransforms(float scroll)
+        {
+            if (_animationProcessor == null) return null;
+            return _animationProcessor.Process(scroll);
+        }
+
+        /// <summary>
+        /// Get the comics model (for editor access to layer data)
+        /// </summary>
+        public Comics Comics => _comics;
+
+        /// <summary>
+        /// Get maximum scroll offset
+        /// </summary>
+        public float MaxScroll => _maxScroll;
+
         private void OnDestroy()
         {
             Unload();
