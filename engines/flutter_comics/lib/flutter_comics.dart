@@ -9,3 +9,4 @@ export 'src/lottie/lottie_mapping.dart';
 export 'src/lottie/lottie_import.dart';
 export 'src/lottie/lottie_export.dart';
 export 'src/comics_reader.dart';
+export 'src/sound_gating.dart';
