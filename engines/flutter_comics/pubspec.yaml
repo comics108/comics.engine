@@ -1,6 +1,6 @@
 name: flutter_comics
 description: "Shared .comics/.puzzle data model, keyframe interpolation, and .lottie import/export -- portable, no native-core dependency."
-version: 0.1.0+2
+version: 0.1.1
 homepage: https://github.com/libsFlutter/flutter_comics
 repository: https://github.com/libsFlutter/flutter_comics
 issue_tracker: https://github.com/libsFlutter/flutter_comics/issues
